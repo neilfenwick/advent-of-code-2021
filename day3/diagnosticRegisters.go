@@ -74,7 +74,7 @@ func (r *DiagnosticRegisters) oxygenReading(readings []int, bitIndexToCheck int)
 	for i := len(oxygenSubRegisters.oxygen) - 1; i >= 0; i-- {
 		bitsNotMatching := oxygenSubRegisters.oxygen[i] ^ mostFrequentBits
 		if int64(bitsNotMatching)&int64(1<<(oxygenSubRegisters.width-bitIndexToCheck-1)) > 0 {
-			oxygenSubRegisters.oxygen = append(oxygenSubRegisters.oxygen[:i], oxygenSubRegisters.oxygen[i+1:]...)
+			oxygenSubRegisters.oxygen = append(oxygenSubRegisters.oxygen[:i], oxygenSubRegisters.oxygen[i+1:]...) //remove it
 		}
 	}
 
@@ -95,7 +95,7 @@ func (r *DiagnosticRegisters) co2Reading(readings []int, bitIndexToCheck int) in
 	for i := len(co2SubRegisters.co2) - 1; i >= 0; i-- {
 		bitsNotMatching := co2SubRegisters.co2[i] ^ mostFrequentBits
 		if int64(bitsNotMatching)&int64(1<<(co2SubRegisters.width-bitIndexToCheck-1)) == 0 {
-			co2SubRegisters.co2 = append(co2SubRegisters.co2[:i], co2SubRegisters.co2[i+1:]...)
+			co2SubRegisters.co2 = append(co2SubRegisters.co2[:i], co2SubRegisters.co2[i+1:]...) //remove it
 		}
 	}
 
