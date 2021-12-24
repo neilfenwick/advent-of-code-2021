@@ -30,3 +30,9 @@ func (s *Stack) Peek() (interface{}, bool) {
 	item := s.stack[length-1]
 	return item, true
 }
+
+func (s *Stack) Copy() *Stack {
+	newCopy := NewStack()
+	copy(newCopy.stack, s.stack)
+	return newCopy
+}
