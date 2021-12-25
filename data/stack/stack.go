@@ -32,7 +32,8 @@ func (s *Stack) Peek() (interface{}, bool) {
 }
 
 func (s *Stack) Copy() *Stack {
-	newCopy := NewStack()
-	copy(newCopy.stack, s.stack)
-	return newCopy
+	newCopy := make([]interface{}, len(s.stack))
+	copy(newCopy, s.stack)
+	result := &Stack{stack: newCopy}
+	return result
 }
