@@ -11,6 +11,17 @@ import (
 	"strings"
 )
 
+type alignmentPosition struct {
+	position int
+	fuelCost int64
+}
+
+type inputPositions struct {
+	positionArray []int
+	min           int
+	max           int
+}
+
 func main() {
 	var (
 		file *os.File
@@ -21,14 +32,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening file: %s", os.Args[1])
 	}
+	defer file.Close()
 
 	result := calcLeastEditDistance(file)
 	fmt.Printf("%+v\n", result)
-}
-
-type alignmentPosition struct {
-	position int
-	fuelCost int64
 }
 
 func calcLeastEditDistance(r io.Reader) alignmentPosition {
@@ -57,19 +64,15 @@ func calcLeastEditDistance(r io.Reader) alignmentPosition {
 	return result
 }
 
-type inputPositions struct {
-	positionArray []int
-	min           int
-	max           int
-}
-
 func readInputPositions(r io.Reader) *inputPositions {
 	var (
 		result inputPositions = inputPositions{}
 	)
+
 	result.positionArray = make([]int, 0, 1000)
 	result.min = math.MaxInt32
 	result.max = math.MinInt32
+
 	s := bufio.NewScanner(r)
 	s.Split(bufio.ScanLines)
 	for s.Scan() {

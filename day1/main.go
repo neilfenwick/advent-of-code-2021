@@ -34,6 +34,7 @@ func main() {
 			log.Fatalf("Error opening file: %s", os.Args[1])
 		}
 	}
+	defer file.Close()
 
 	count := depthIncreasesCount(file, windowSize)
 	fmt.Println(count)

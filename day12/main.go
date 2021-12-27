@@ -13,8 +13,10 @@ import (
 	"github.com/neilfenwick/advent-of-code-2021/data/stack"
 )
 
-var caveGraph *graph.Graph = graph.NewGraph()
-var allPaths []stack.Stack = make([]stack.Stack, 0)
+var (
+	caveGraph *graph.Graph  = graph.NewGraph()
+	allPaths  []stack.Stack = make([]stack.Stack, 0)
+)
 
 type (
 	canVisitCaveFunc func(node, start *graph.Node, visited []*graph.Node) bool
@@ -48,6 +50,8 @@ func main() {
 			log.Fatalf("Error opening file: %s", os.Args[1])
 		}
 	}
+	defer file.Close()
+
 	startName, endName := "start", "end"
 	populateCaveSystemGraph(file)
 	fmt.Printf("Walking from %s to %s with strategy %d\n", startName, endName, strategy)

@@ -24,6 +24,7 @@ func main() {
 			log.Fatalf("Error opening file: %s", os.Args[1])
 		}
 	}
+	defer file.Close()
 
 	depth, distance := calcPositionWithAim(file)
 

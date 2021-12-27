@@ -46,6 +46,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening file: %s", os.Args[1])
 	}
+	defer file.Close()
 
 	navigationLines := findCorruptClosingChars(file)
 	corruptChars := make([]rune, 50)

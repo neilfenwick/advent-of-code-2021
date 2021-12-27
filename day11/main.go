@@ -10,6 +10,16 @@ import (
 	"strings"
 )
 
+var (
+	grid              map[point]*octopus = make(map[point]*octopus)
+	cumulativeFlashed map[point]bool     = make(map[point]bool, 100)
+)
+
+type flashStats struct {
+	totalIterations, numberOfFlashes int
+	iterationsWhereAllFlashed        []int
+}
+
 func main() {
 	var (
 		file               *os.File
@@ -32,13 +42,12 @@ func main() {
 			log.Fatalf("Error opening file: %s", os.Args[1])
 		}
 	}
+	defer file.Close()
 
 	buildOctopusMap(file)
 	result := iterateSteps(numberOfIterations)
 	fmt.Printf("%+v\n", *result)
 }
-
-var grid map[point]*octopus = make(map[point]*octopus)
 
 func buildOctopusMap(r io.Reader) {
 	var (
@@ -56,11 +65,6 @@ func buildOctopusMap(r io.Reader) {
 		}
 		rowIndex++
 	}
-}
-
-type flashStats struct {
-	totalIterations, numberOfFlashes int
-	iterationsWhereAllFlashed        []int
 }
 
 func iterateSteps(count int) *flashStats {
@@ -83,8 +87,6 @@ func iterateSteps(count int) *flashStats {
 	result.numberOfFlashes = cumulativeFlashCount
 	return &result
 }
-
-var cumulativeFlashed map[point]bool = make(map[point]bool, 100)
 
 func step(points []point) {
 	var (

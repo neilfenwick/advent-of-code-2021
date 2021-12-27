@@ -26,6 +26,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening file: %s", os.Args[1])
 	}
+	defer file.Close()
 
 	buildHeightMap(file)
 
@@ -97,9 +98,12 @@ const (
 )
 
 func findNeighboursHigherOrLower(p point, strategy HigherOrLowerStrategy) []point {
+	// Not great for readability. This func needs a refactor.
+	// The fact that it was tricky to write, suggests the design might not be good.
 	var (
 		result = make([]point, 0, 4)
 	)
+
 	currentRow, found := heightmap[p.y]
 	if !found {
 		return []point{}

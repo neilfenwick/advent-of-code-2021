@@ -19,6 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening file: %s", os.Args[1])
 	}
+	defer file.Close()
 
 	diagnostics := initDiagnosticRegisters(file)
 	power := diagnostics.PowerConsumption()

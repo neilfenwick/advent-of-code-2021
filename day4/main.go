@@ -50,6 +50,7 @@ func main() {
 			log.Fatalf("Error opening file: %s", os.Args[1])
 		}
 	}
+	defer file.Close()
 
 	sum, number := findBingoSum(file, strategy)
 	result := sum * number

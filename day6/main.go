@@ -33,6 +33,7 @@ func main() {
 			log.Fatalf("Error opening file: %s", os.Args[1])
 		}
 	}
+	defer file.Close()
 
 	result := countFishAfterDays(file, numberOfDays)
 	fmt.Println(result)
@@ -43,9 +44,11 @@ func countFishAfterDays(r io.Reader, numberOfDays int) int64 {
 		result int64
 	)
 	fish := readFish(r)
+
 	for i := 0; i < numberOfDays; i++ {
 		fish = runGeneration(fish)
 	}
+
 	for _, v := range fish {
 		result += v
 	}
@@ -83,18 +86,5 @@ func runGeneration(fish map[int]int64) map[int]int64 {
 			result[age-1] = count
 		}
 	}
-
 	return result
-
-	// currentPopSize := len(fish)
-	// for i := 0; i < currentPopSize; i++ {
-	// 	switch fish[i] {
-	// 	case 0:
-	// 		fish[i] = 6
-	// 		fish = append(fish, 8)
-	// 	default:
-	// 		fish[i] = fish[i] - 1
-	// 	}
-	// }
-	// return fish
 }

@@ -20,7 +20,7 @@ func NewGraph() *Graph {
 }
 
 // GetNode returns a Node that has a key with the unique name supplied
-func (g *Graph) GetNode(name string) (*Node, bool) {
+func (g *Graph) GetNode(name string) (value *Node, found bool) {
 	node, ok := g.Nodes[name]
 	return node, ok
 }

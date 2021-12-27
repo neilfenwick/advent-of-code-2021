@@ -13,7 +13,7 @@ func (s *Stack) Push(item interface{}) {
 	s.stack = append(s.stack, item)
 }
 
-func (s *Stack) Pop() (interface{}, bool) {
+func (s *Stack) Pop() (value interface{}, found bool) {
 	item, found := s.Peek()
 	if found {
 		s.stack = s.stack[:len(s.stack)-1]
@@ -21,7 +21,7 @@ func (s *Stack) Pop() (interface{}, bool) {
 	return item, found
 }
 
-func (s *Stack) Peek() (interface{}, bool) {
+func (s *Stack) Peek() (value interface{}, found bool) {
 	length := len(s.stack)
 	if length == 0 {
 		return nil, false
