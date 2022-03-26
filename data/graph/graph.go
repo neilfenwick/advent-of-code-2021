@@ -25,7 +25,7 @@ func (g *Graph) GetNode(name string) (value *Node, found bool) {
 	return node, ok
 }
 
-// AppendNode creates a new node using the given Key and adds the node
+// NewNode creates a new node using the given Key and adds the node
 func (g *Graph) NewNode(name string, value interface{}) *Node {
 	node := &Node{
 		Name:  name,
