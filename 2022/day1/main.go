@@ -31,7 +31,8 @@ func main() {
 		_ = file.Close()
 	}(file)
 
-	printMaxCalories(buildFoodPacks(file))
+	foodPacks := buildFoodPacks(file)
+	printCalories(foodPacks)
 }
 
 type foodPack struct {
@@ -66,13 +67,10 @@ func buildFoodPacks(reader io.Reader) []foodPack {
 	return packs
 }
 
-func printMaxCalories(foodPacks []foodPack) {
-	sort.Sort(byCalories(foodPacks))
+// printCalories prints the sorted (desc) calories values
+func printCalories(foodPacks []foodPack) {
+	sort.Slice(foodPacks, func(i, j int) bool {
+		return foodPacks[i].calories > foodPacks[j].calories
+	})
 	fmt.Println(foodPacks)
 }
-
-type byCalories []foodPack
-
-func (c byCalories) Len() int           { return len(c) }
-func (c byCalories) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
-func (c byCalories) Less(i, j int) bool { return c[i].calories < c[j].calories }
