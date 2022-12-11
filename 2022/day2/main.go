@@ -6,13 +6,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
-)
-
-const (
-	Rock = iota
-	Paper
-	Scissors
 )
 
 func main() {
@@ -21,10 +16,16 @@ func main() {
 		err  error
 	)
 
+	strategy = scoreAsMove
+
 	switch len(os.Args) {
 	case 1:
 		file = os.Stdin
 	case 3:
+		scoringStrategy, _ := strconv.Atoi(os.Args[2])
+		if scoringStrategy > 0 {
+			strategy = scoreAsResult
+		}
 		fallthrough
 	case 2:
 		file, err = os.Open(os.Args[1])
@@ -35,13 +36,28 @@ func main() {
 	defer func(file *os.File) {
 		_ = file.Close()
 	}(file)
+
 	rounds := readRounds(file)
-  var result int
-  for _, rnd := range rounds {
-    result += rnd.score
-  }
-  fmt.Println(result)
+	var result int
+
+	for _, rnd := range rounds {
+		result += rnd.score
+	}
+	fmt.Println(result)
 }
+
+var strategy scoringStrategy
+
+type scoringStrategy func(round game) int
+
+const (
+	Rock = iota
+	Paper
+	Scissors
+	Lose
+	Draw
+	Win
+)
 
 func readRounds(file io.Reader) []game {
 	games := []game{}
@@ -59,7 +75,7 @@ func parsePlays(rnd string) game {
 	oppMove := parseMove(choices[0])
 	myMove := parseMove(choices[1])
 	round := game{opponent: oppMove, mine: myMove}
-	round.score = scoreRound(round)
+	round.score = strategy(round)
 	return round
 }
 
@@ -76,7 +92,7 @@ func parseMove(input string) move {
 	return result
 }
 
-func scoreRound(round game) int {
+func scoreAsMove(round game) int {
 	var result int
 	switch round.mine {
 	case Rock:
@@ -104,6 +120,40 @@ func scoreRound(round game) int {
 		case Paper:
 			result = 3 + 6
 		case Scissors:
+			result = 3 + 3
+		}
+	}
+	return result
+}
+
+func scoreAsResult(round game) int {
+	var result int
+	switch round.opponent {
+	case Rock:
+		switch round.mine + 3 {
+		case Draw:
+			result = 1 + 3
+		case Lose:
+			result = 3 + 0
+		case Win:
+			result = 2 + 6
+		}
+	case Paper:
+		switch round.mine + 3 {
+		case Win:
+			result = 3 + 6
+		case Draw:
+			result = 2 + 3
+		case Lose:
+			result = 1 + 0
+		}
+	case Scissors:
+		switch round.mine + 3 {
+		case Lose:
+			result = 2 + 0
+		case Win:
+			result = 1 + 6
+		case Draw:
 			result = 3 + 3
 		}
 	}
