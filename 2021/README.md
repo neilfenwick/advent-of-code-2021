@@ -11,9 +11,7 @@ Interesting thoughts that I've had or new things that I've learned:
 
 - How to write more readable Go - [Workshop: Practical Go - GoSG Meetup - Dave Cheney][workshop]
 - A generally held opinion is that global state should be avoided. I agree. Up until about day 12, I  had used a few package variables, like maps, in places where the global state isn't long-lived (even in just a simple "run-once" CLI application). In a server, global / shared state can be dangerous and result in state leaking between requests, etc.
-- [Why pointers to slices can be useful][slice pointers]
 - [Waitgroups][waitgroups] are an easier way to keep track of when concurrent goroutines complete
 
-[slice pointers]: https://medium.com/swlh/golang-tips-why-pointers-to-slices-are-useful-and-how-ignoring-them-can-lead-to-tricky-bugs-cac90f72e77b
 [waitgroups]: https://gobyexample.com/waitgroups
 [workshop]: https://www.youtube.com/watch?v=gi7t6Pl9rxE
