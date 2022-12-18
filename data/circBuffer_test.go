@@ -7,7 +7,7 @@ import (
 
 func TestIntBuffer_Write(t *testing.T) {
 	type fields struct {
-		buffer         []int
+		buffer         []interface{}
 		WriteCursorPos int
 	}
 	type args struct {
@@ -20,18 +20,18 @@ func TestIntBuffer_Write(t *testing.T) {
 	}{
 		{
 			"Overwrite value increments write cursor by one",
-			fields{[]int{1, 2, 3}, 1},
+			fields{[]interface{}{1, 2, 3}, 1},
 			args{123},
 		},
 		{
 			"Write wraps back to beginning when write to end",
-			fields{[]int{1, 2, 3}, 2},
+			fields{[]interface{}{1, 2, 3}, 2},
 			args{123},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &IntBuffer{
+			b := &CircularBuffer{
 				buffer:         tt.fields.buffer,
 				WriteCursorPos: tt.fields.WriteCursorPos,
 			}
@@ -46,7 +46,7 @@ func TestIntBuffer_Write(t *testing.T) {
 
 func TestIntBuffer_Read(t *testing.T) {
 	type fields struct {
-		buffer         []int
+		buffer         []interface{}
 		WriteCursorPos int
 	}
 	type args struct {
@@ -57,36 +57,36 @@ func TestIntBuffer_Read(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   []int
+		want   []interface{}
 	}{
 		{
 			"Read whole buffer with cursor at start",
-			fields{[]int{1, 2, 3, 4, 5}, 0},
+			fields{[]interface{}{1, 2, 3, 4, 5}, 0},
 			args{0, 5},
-			[]int{1, 2, 3, 4, 5},
+			[]interface{}{1, 2, 3, 4, 5},
 		},
 		{
 			"Read first two values with cursor at start",
-			fields{[]int{1, 2, 3, 4, 5}, 0},
+			fields{[]interface{}{1, 2, 3, 4, 5}, 0},
 			args{0, 2},
-			[]int{1, 2},
+			[]interface{}{1, 2},
 		},
 		{
 			"Read last and first value with cursor at end",
-			fields{[]int{1, 2, 3, 4, 5}, 4},
+			fields{[]interface{}{1, 2, 3, 4, 5}, 4},
 			args{0, 2},
-			[]int{5, 1},
+			[]interface{}{5, 1},
 		},
 		{
 			"Read last value with cursor at beginning and negative offset",
-			fields{[]int{1, 2, 3, 4, 5}, 0},
+			fields{[]interface{}{1, 2, 3, 4, 5}, 0},
 			args{-1, 1},
-			[]int{5},
+			[]interface{}{5},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			b := &IntBuffer{
+			b := &CircularBuffer{
 				buffer:         tt.fields.buffer,
 				WriteCursorPos: tt.fields.WriteCursorPos,
 			}

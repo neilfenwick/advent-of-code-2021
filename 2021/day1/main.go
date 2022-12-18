@@ -45,7 +45,7 @@ func main() {
 func depthIncreasesCount(r io.Reader, windowSize int) int {
 	var (
 		count, line int
-		buffer      = data.NewIntBuffer(windowSize + 1)
+		buffer      = data.NewCircularBuffer(windowSize + 1)
 		scanner     = bufio.NewScanner(r)
 	)
 
@@ -68,10 +68,10 @@ func depthIncreasesCount(r io.Reader, windowSize int) int {
 	return count
 }
 
-func sumWindow(numbers []int) int {
+func sumWindow(numbers []interface{}) int {
 	var total int
 	for _, v := range numbers {
-		total += v
+		total += v.(int)
 	}
 	return total
 }
