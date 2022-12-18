@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/neilfenwick/advent-of-code/data/circBuffer"
+	"github.com/neilfenwick/advent-of-code/data"
 )
 
 func main() {
@@ -45,7 +45,7 @@ func main() {
 func depthIncreasesCount(r io.Reader, windowSize int) int {
 	var (
 		count, line int
-		buffer      = circBuffer.NewIntBuffer(windowSize + 1)
+		buffer      = data.NewIntBuffer(windowSize + 1)
 		scanner     = bufio.NewScanner(r)
 	)
 

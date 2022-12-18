@@ -9,17 +9,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/neilfenwick/advent-of-code/data/graph"
-	"github.com/neilfenwick/advent-of-code/data/stack"
+	"github.com/neilfenwick/advent-of-code/data"
 )
 
 var (
-	caveGraph = graph.NewGraph()
-	allPaths  = make([]stack.Stack, 0)
+	caveGraph = data.NewGraph()
+	allPaths  = make([]data.Stack, 0)
 )
 
 type (
-	canVisitCaveFunc func(node, start *graph.Node, visited []*graph.Node) bool
+	canVisitCaveFunc func(node, start *data.Node, visited []*data.Node) bool
 	Strategy         int
 )
 
@@ -63,7 +62,7 @@ func main() {
 
 func populateCaveSystemGraph(r io.Reader) {
 	var (
-		startNode, endNode *graph.Node
+		startNode, endNode *data.Node
 		found              bool
 	)
 	s := bufio.NewScanner(r)
@@ -93,11 +92,11 @@ func findPaths(startName, endName string, strategy Strategy) {
 	case SingleSmallCaveTwice:
 		strategyFunc = canVisitSingleSmallCaveTwice
 	}
-	currentPath := *stack.NewStack()
-	walkDepthFirst(start, end, start, currentPath, []*graph.Node{}, strategyFunc)
+	currentPath := *data.NewStack()
+	walkDepthFirst(start, end, start, currentPath, []*data.Node{}, strategyFunc)
 }
 
-func walkDepthFirst(current, end, start *graph.Node, currentPathDepthFirst stack.Stack, visitedCurrentTraverse []*graph.Node, canVisitFunc canVisitCaveFunc) {
+func walkDepthFirst(current, end, start *data.Node, currentPathDepthFirst data.Stack, visitedCurrentTraverse []*data.Node, canVisitFunc canVisitCaveFunc) {
 	currentPathDepthFirst.Push(current)
 	if current == end {
 		allPaths = append(allPaths, *currentPathDepthFirst.Copy())
@@ -113,7 +112,7 @@ func walkDepthFirst(current, end, start *graph.Node, currentPathDepthFirst stack
 }
 
 // canVisitSmallCavesOnlyOnce returns false if the name is lowercase, and it has already been visited
-func canVisitSmallCavesOnlyOnce(start, node *graph.Node, visited []*graph.Node) bool {
+func canVisitSmallCavesOnlyOnce(start, node *data.Node, visited []*data.Node) bool {
 	if node == start {
 		return false
 	}
@@ -130,7 +129,7 @@ func canVisitSmallCavesOnlyOnce(start, node *graph.Node, visited []*graph.Node) 
 
 // canVisitSingleSmallCaveTwice returns false if the name is lowercase, and it has already been visited
 // except that one lowercase cave may be visited twice
-func canVisitSingleSmallCaveTwice(start, node *graph.Node, visited []*graph.Node) bool {
+func canVisitSingleSmallCaveTwice(start, node *data.Node, visited []*data.Node) bool {
 	var (
 		smallCaveVisitCount   = make(map[string]int)
 		smallCaveLimitReached bool

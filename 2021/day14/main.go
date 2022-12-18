@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/neilfenwick/advent-of-code/data/linkedList"
+	"github.com/neilfenwick/advent-of-code/data"
 	"github.com/neilfenwick/advent-of-code/files"
 	"io"
 	"log"
@@ -43,7 +43,7 @@ func buildPolymerMap(scanner *bufio.Scanner) map[string]rune {
 }
 
 func countMinMaxElementOccurrences(input string, polymers map[string]rune) (int, int) {
-	elementsLinkedList := linkedList.NewRuneLinkedList([]rune(input))
+	elementsLinkedList := data.NewRuneLinkedList([]rune(input))
 	for i := 0; i < 10; i++ {
 		expandElements(elementsLinkedList, polymers)
 	}
@@ -69,9 +69,9 @@ func countMinMaxElementOccurrences(input string, polymers map[string]rune) (int,
 	return min, max
 }
 
-func expandElements(elementsList *linkedList.RuneLinkedList, polymers map[string]rune) {
+func expandElements(elementsList *data.RuneLinkedList, polymers map[string]rune) {
 	currentElement := elementsList.Head
-	newElements := linkedList.NewRuneLinkedList([]rune{})
+	newElements := data.NewRuneLinkedList([]rune{})
 	for {
 		if currentElement.Next == nil {
 			break
@@ -84,10 +84,10 @@ func expandElements(elementsList *linkedList.RuneLinkedList, polymers map[string
 	mergeLinkedLists(elementsList, newElements)
 }
 
-func mergeLinkedLists(first *linkedList.RuneLinkedList, second *linkedList.RuneLinkedList) {
+func mergeLinkedLists(first *data.RuneLinkedList, second *data.RuneLinkedList) {
 	currentElement := first.Head
 	currentSecondListElement := second.Head
-	var tempNext *linkedList.RuneLinkedListNode
+	var tempNext *data.RuneLinkedListNode
 	for {
 		tempNext = currentElement.Next
 		if tempNext == nil || currentSecondListElement == nil {

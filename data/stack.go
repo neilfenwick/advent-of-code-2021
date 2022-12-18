@@ -1,4 +1,4 @@
-package stack
+package data
 
 type Stack struct {
 	stack []interface{}
@@ -7,6 +7,12 @@ type Stack struct {
 func NewStack() *Stack {
 	stack := make([]interface{}, 0, 100)
 	return &Stack{stack: stack}
+}
+
+func NewStackFromItems(items []interface{}) *Stack {
+	stack := NewStack()
+	stack.stack = items
+	return stack
 }
 
 func (s *Stack) Push(item interface{}) {
@@ -36,4 +42,12 @@ func (s *Stack) Copy() *Stack {
 	copy(newCopy, s.stack)
 	result := &Stack{stack: newCopy}
 	return result
+}
+
+func (s *Stack) Size() int {
+	return len(s.stack)
+}
+
+func (s *Stack) Items() []interface{} {
+	return s.stack
 }

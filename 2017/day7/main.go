@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/neilfenwick/advent-of-code/data/tree"
+	"github.com/neilfenwick/advent-of-code/tree"
 	"os"
 	"sort"
 )

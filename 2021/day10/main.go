@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/neilfenwick/advent-of-code/data/stack"
+    "github.com/neilfenwick/advent-of-code/data"
 )
 
 type chunk struct {
@@ -81,7 +81,7 @@ func findCorruptClosingChars(r io.Reader) []navigationLine {
 	s := bufio.NewScanner(r)
 	s.Split(bufio.ScanLines)
 	for s.Scan() {
-		newStack := stack.NewStack()
+		newStack := data.NewStack()
 		line := strings.TrimSpace(s.Text())
 		if corruptChar, isCorrupt := isCorruptLine([]rune(line), newStack, 0); isCorrupt {
 			result = append(result, navigationLine{errorType: CorruptLine, corruptChar: corruptChar})
@@ -103,7 +103,7 @@ func findCorruptClosingChars(r io.Reader) []navigationLine {
 	return result
 }
 
-func isCorruptLine(chars []rune, stack *stack.Stack, currentPosition int) (rune, bool) {
+func isCorruptLine(chars []rune, stack *data.Stack, currentPosition int) (rune, bool) {
 	if currentPosition > len(chars)-1 {
 		return 0, false
 	}

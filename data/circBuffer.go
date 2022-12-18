@@ -1,4 +1,4 @@
-package circBuffer
+package data
 
 type IntBuffer struct {
 	buffer         []int

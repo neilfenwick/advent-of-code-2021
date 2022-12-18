@@ -1,4 +1,4 @@
-package linkedList
+package data
 
 type RuneLinkedList struct {
 	Head *RuneLinkedListNode

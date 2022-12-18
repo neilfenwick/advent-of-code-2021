@@ -1,4 +1,4 @@
-package graph
+package data
 
 // Node represents an element of a Graph
 type Node struct {

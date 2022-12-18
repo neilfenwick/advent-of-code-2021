@@ -1,4 +1,4 @@
-package circBuffer
+package data
 
 import (
 	"reflect"
