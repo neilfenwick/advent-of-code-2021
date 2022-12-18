@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/neilfenwick/advent-of-code/data"
@@ -18,10 +19,15 @@ func main() {
 		err  error
 	)
 
+	strategy = processMoveInstructions
 	switch len(os.Args) {
 	case 1:
 		file = os.Stdin
 	case 3:
+		inputStrategy, _ := strconv.Atoi(os.Args[2])
+		if inputStrategy > 0 {
+			strategy = processMoveInstructionsPart2
+		}
 		fallthrough
 	case 2:
 		file, err = os.Open(os.Args[1])
@@ -69,6 +75,10 @@ func main() {
 	fmt.Println()
 }
 
+type craneStrategy func(s *bufio.Scanner, crates []*data.Stack)
+
+var strategy craneStrategy
+
 func processStacks(file *os.File) []*data.Stack {
 	s := bufio.NewScanner(file)
 	var queues []*data.Queue
@@ -97,12 +107,13 @@ func processStacks(file *os.File) []*data.Stack {
 	}
 
 	stacks := convertToStacks(queues)
-	processMoveInstructions(s, stacks)
+	strategy(s, stacks)
 	return stacks
 }
 
 func convertToStacks(queues []*data.Queue) []*data.Stack {
 	stacks := make([]*data.Stack, len(queues))
+
 	for p, q := range queues {
 		items := q.Items()
 		// reverse the items
@@ -111,15 +122,18 @@ func convertToStacks(queues []*data.Queue) []*data.Stack {
 		})
 		stacks[p] = data.NewStackFromItems(q.Items())
 	}
+
 	return stacks
 }
 
 func setupCrateQueues(lineLength int) []*data.Queue {
 	numberOfStacks := (lineLength + 1) / 4
 	result := make([]*data.Queue, numberOfStacks)
+
 	for i := 0; i < numberOfStacks; i++ {
 		result[i] = data.NewQueue()
 	}
+
 	return result
 }
 
@@ -142,6 +156,36 @@ func processMoveInstructions(s *bufio.Scanner, crates []*data.Stack) {
 			crates[toIndex-1].Push(crate)
 		}
 	}
+
+	printCrates(crates)
+}
+
+func processMoveInstructionsPart2(s *bufio.Scanner, crates []*data.Stack) {
+	fmt.Println("Processing strategy part2")
+	printCrates(crates)
+
+	for s.Scan() {
+		if s.Err() == io.EOF {
+			break
+		}
+
+		count, fromIndex, toIndex := 0, 0, 0
+		fmt.Sscanf(s.Text(), "move %d from %d to %d", &count, &fromIndex, &toIndex)
+
+		subStack := data.NewStack()
+		for i := 0; i < count; i++ {
+			crate, found := crates[fromIndex-1].Pop()
+			if !found {
+				log.Printf("Expected to find a crate in stack %d, but was empty", fromIndex-1)
+			}
+			subStack.Push(crate)
+		}
+		for i := 0; i < count; i++ {
+			crate, _ := subStack.Pop()
+			crates[toIndex-1].Push(crate)
+		}
+	}
+
 	printCrates(crates)
 }
 
@@ -158,6 +202,7 @@ func printCrates(crates []*data.Stack) {
 			longest = s.Size()
 		}
 	}
+
 	for i := longest; i > 0; i-- {
 		builder := strings.Builder{}
 		for _, q := range stacks {
@@ -172,5 +217,6 @@ func printCrates(crates []*data.Stack) {
 		}
 		fmt.Println(builder.String())
 	}
+
 	fmt.Println()
 }
