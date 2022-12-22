@@ -75,7 +75,7 @@ func searchForUnbalancedChildren(t *tree.Tree, startNodeName string) (string, in
 		panic(fmt.Sprintf("Could not recurse into node '%s'", startNodeName))
 	}
 
-	children := startNode.GetChildren()
+	children := startNode.Children
 	var weights []nodeWeights
 	weightMap := make(map[int]int)
 
@@ -117,7 +117,7 @@ func searchForUnbalancedChildren(t *tree.Tree, startNodeName string) (string, in
 
 func getNodeWeight(node *tree.Node) int {
 	var weight int
-	for _, child := range node.GetChildren() {
+	for _, child := range node.Children {
 		weight += getNodeWeight(child)
 	}
 
