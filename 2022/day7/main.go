@@ -37,14 +37,14 @@ func main() {
 	}(file)
 
 	/*
-			   Because this problem looked like a file tree calculation, I just used a tree data
-			   structure from previous years.  In hindisight, that old tree wasn't the best
-			   implementation. And it could probably do with being re-written with generics.
+	   Because this problem looked like a file tree calculation, I just used a tree data
+	   structure from previous years.  In hindisight, that old tree wasn't the best
+	   implementation. And it could probably do with being re-written with generics.
 
-			   This solution could probably have been achieved by just passing a hashtable around
-			   and doing a recursive parse of the input.
+	   This solution could probably have been achieved by just passing a hashtable around
+	   and doing a recursive parse of the input.
 
-		       The solution feels a bit scatter-brained and unelegant 😕
+	   The solution feels a bit scatter-brained and unelegant 😕
 	*/
 
 	fileTree := processTerminalOutput(file)
@@ -68,13 +68,13 @@ func main() {
 	largeDirectories := make([]directory, 0)
 	for name, size := range results {
 		if size >= requiredToFree {
-            largeDirectories = append(largeDirectories, directory{name:name, size: size})
+			largeDirectories = append(largeDirectories, directory{name: name, size: size})
 			fmt.Printf("%s: %d\n", name, size)
 		}
 	}
-    sort.Slice(largeDirectories, func(i, j int) bool {
-        return largeDirectories[i].size < largeDirectories[j].size
-    })
+	sort.Slice(largeDirectories, func(i, j int) bool {
+		return largeDirectories[i].size < largeDirectories[j].size
+	})
 	fmt.Printf("Directory to delete: %v\n", largeDirectories[0])
 }
 
@@ -157,7 +157,10 @@ func processCommand(s *bufio.Scanner, t *tree.Tree, currentNode *tree.Node) {
 			if strings.HasPrefix(line.prefix, "dir") {
 				log.Printf("Appending directory '%s'\n", line.suffix)
 				directory := directory{name: line.suffix}
-				t.AppendChild(currentNode.Key, tree.Key{Name: currentNode.Key.Name + "/" + line.suffix, Value: directory})
+				t.AppendChild(
+					currentNode.Key,
+					tree.Key{Name: currentNode.Key.Name + "/" + line.suffix, Value: directory},
+				)
 				continue
 			}
 
