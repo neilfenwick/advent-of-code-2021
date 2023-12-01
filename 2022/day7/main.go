@@ -38,7 +38,7 @@ func main() {
 
 	/*
 	   Because this problem looked like a file tree calculation, I just used a tree data
-	   structure from previous years.  In hindisight, that old tree wasn't the best
+	   structure from previous years.  In hindsight, that old tree wasn't the best
 	   implementation. And it could probably do with being re-written with generics.
 
 	   This solution could probably have been achieved by just passing a hashtable around
