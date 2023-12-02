@@ -1,3 +1,3 @@
 module github.com/neilfenwick/advent-of-code
 
-go 1.17
+go 1.21
