@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -51,6 +50,21 @@ var wordToDigitMap = map[string]rune{
 
 type digitParseFuncStrategy func(string) string
 
+func sequentialReplaceNumberWords(line string) string {
+	replacer := strings.NewReplacer(
+		"one", "1",
+		"two", "2",
+		"three", "3",
+		"four", "4",
+		"five", "5",
+		"six", "6",
+		"seven", "7",
+		"eight", "8",
+		"nine", "9")
+
+	return replacer.Replace(line)
+}
+
 func parseCoordinates(reader io.Reader, parser digitParseFuncStrategy) []string {
 	scanner := bufio.NewScanner(reader)
 	results := make([]string, 0)
@@ -74,43 +88,6 @@ func parseCoordinates(reader io.Reader, parser digitParseFuncStrategy) []string 
 	}
 
 	return results
-}
-
-func sequentialReplaceNumberWords(line string) string {
-	var result, previous string
-	previous = ""
-    result = line
-	for result != previous {
-        previous = result
-		result = replaceFirstNumberWord(result)
-	}
-
-	return result
-}
-
-func replaceFirstNumberWord(line string) string {
-	indexes := make([]int, 0)
-	indexToWordLookup := make(map[int]string)
-	result := line
-
-	for k := range wordToDigitMap {
-		idx := strings.Index(line, k)
-		if idx == -1 {
-			continue
-		}
-		indexToWordLookup[idx] = k
-		indexes = append(indexes, idx)
-	}
-
-	if len(indexes) == 0 {
-		return result
-	}
-
-	slices.Sort(indexes)
-	firstWord := indexToWordLookup[indexes[0]]
-	result = strings.Replace(result, firstWord, string(wordToDigitMap[firstWord]), 1)
-
-	return result
 }
 
 func findFirstDigit(line string) (rune, error) {
