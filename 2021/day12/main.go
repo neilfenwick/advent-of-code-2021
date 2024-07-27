@@ -80,9 +80,7 @@ func populateCaveSystemGraph(r io.Reader) {
 }
 
 func findPaths(startName, endName string, strategy Strategy) {
-	var (
-		strategyFunc canVisitCaveFunc
-	)
+	var strategyFunc canVisitCaveFunc
 	start, _ := caveGraph.GetNode(startName)
 	end, _ := caveGraph.GetNode(endName)
 
@@ -96,7 +94,12 @@ func findPaths(startName, endName string, strategy Strategy) {
 	walkDepthFirst(start, end, start, currentPath, []*data.Node{}, strategyFunc)
 }
 
-func walkDepthFirst(current, end, start *data.Node, currentPathDepthFirst data.Stack, visitedCurrentTraverse []*data.Node, canVisitFunc canVisitCaveFunc) {
+func walkDepthFirst(
+	current, end, start *data.Node,
+	currentPathDepthFirst data.Stack,
+	visitedCurrentTraverse []*data.Node,
+	canVisitFunc canVisitCaveFunc,
+) {
 	currentPathDepthFirst.Push(current)
 	if current == end {
 		allPaths = append(allPaths, *currentPathDepthFirst.Copy())
@@ -106,7 +109,14 @@ func walkDepthFirst(current, end, start *data.Node, currentPathDepthFirst data.S
 	visitedCurrentTraverse = append(visitedCurrentTraverse, current)
 	for _, child := range current.Links {
 		if canVisitFunc(start, child, visitedCurrentTraverse) {
-			walkDepthFirst(child, end, start, currentPathDepthFirst, visitedCurrentTraverse, canVisitFunc)
+			walkDepthFirst(
+				child,
+				end,
+				start,
+				currentPathDepthFirst,
+				visitedCurrentTraverse,
+				canVisitFunc,
+			)
 		}
 	}
 }
