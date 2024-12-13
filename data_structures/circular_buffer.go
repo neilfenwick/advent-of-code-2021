@@ -31,5 +31,5 @@ func (b *CircularBuffer) Read(offset int, count int) []interface{} {
 }
 
 func (b *CircularBuffer) Size() int {
-    return len(b.buffer)
+	return len(b.buffer)
 }

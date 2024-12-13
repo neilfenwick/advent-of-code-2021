@@ -3,12 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/neilfenwick/advent-of-code/data"
-	"github.com/neilfenwick/advent-of-code/files"
 	"io"
 	"log"
 	"math"
 	"strings"
+
+	data "github.com/neilfenwick/advent-of-code/data_structures"
+	"github.com/neilfenwick/advent-of-code/files"
 )
 
 func main() {

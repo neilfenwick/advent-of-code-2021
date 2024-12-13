@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/neilfenwick/advent-of-code/data"
+	data "github.com/neilfenwick/advent-of-code/data_structures"
 )
 
 func main() {

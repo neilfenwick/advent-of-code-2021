@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-    "github.com/neilfenwick/advent-of-code/data"
+	data "github.com/neilfenwick/advent-of-code/data_structures"
 )
 
 type chunk struct {
