@@ -31,12 +31,8 @@ func main() {
 	sort.Ints(left)
 	sort.Ints(right)
 
-	total := 0
-	for i := range left {
-		total += abs(left[i] - right[i])
-	}
-
-	fmt.Printf("Total: %d\n", total)
+	part1(left, right)
+	part2(left, right)
 }
 
 func parseLocations(file *os.File) ([]int, []int) {
@@ -66,4 +62,29 @@ func abs(x int) int {
 		return -x
 	}
 	return x
+}
+
+func part1(left, right []int) {
+	total := 0
+	for i := range left {
+		total += abs(left[i] - right[i])
+	}
+
+	fmt.Printf("Part 1 Total: %d\n", total)
+}
+
+func part2(left, right []int) {
+	total := 0
+	rightGroup := make(map[int]int)
+
+	for i := range right {
+		rightGroup[right[i]]++
+	}
+
+	for i := range left {
+		leftValue := left[i]
+		total += leftValue * rightGroup[leftValue]
+	}
+
+	fmt.Printf("Part 2 Total: %d\n", total)
 }
