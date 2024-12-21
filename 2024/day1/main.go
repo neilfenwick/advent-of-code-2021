@@ -39,22 +39,36 @@ func parseLocations(file *os.File) ([]int, []int) {
 	left := make([]int, 1000)
 	right := make([]int, 1000)
 	scanner := bufio.NewScanner(file)
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		loc1, loc2 := parseLine(line)
 		left = append(left, loc1)
 		right = append(right, loc2)
 	}
+
 	return left, right
 }
 
 func parseLine(line string) (int, int) {
 	var id1, id2 int
+
 	_, err := fmt.Sscanf(line, "%d %d", &id1, &id2)
 	if err != nil {
 		log.Fatalf("Error parsing line: %s", line)
 	}
+
 	return id1, id2
+}
+
+func part1(left, right []int) {
+	total := 0
+
+	for i := range left {
+		total += abs(left[i] - right[i])
+	}
+
+	fmt.Printf("Part 1 Total: %d\n", total)
 }
 
 func abs(x int) int {
@@ -62,15 +76,6 @@ func abs(x int) int {
 		return -x
 	}
 	return x
-}
-
-func part1(left, right []int) {
-	total := 0
-	for i := range left {
-		total += abs(left[i] - right[i])
-	}
-
-	fmt.Printf("Part 1 Total: %d\n", total)
 }
 
 func part2(left, right []int) {
