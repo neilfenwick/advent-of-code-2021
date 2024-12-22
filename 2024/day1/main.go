@@ -36,8 +36,8 @@ func main() {
 }
 
 func parseLocations(file *os.File) ([]int, []int) {
-	left := make([]int, 1000)
-	right := make([]int, 1000)
+	left := make([]int, 0, 1000)
+	right := make([]int, 0, 1000)
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
