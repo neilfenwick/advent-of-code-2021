@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"io"
 	"log"
 	"os"
 )
@@ -28,7 +29,7 @@ type point struct {
 	y int
 }
 
-func parseMap(file *os.File) map[point]rune {
+func parseMap(file io.Reader) map[point]rune {
 
 	mapData := make(map[point]rune)
 

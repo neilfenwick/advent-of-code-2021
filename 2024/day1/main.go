@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"sort"
@@ -35,7 +36,8 @@ func main() {
 	part2(left, right)
 }
 
-func parseLocations(file *os.File) ([]int, []int) {
+func parseLocations(file io.Reader) ([]int, []int) {
+
 	left := make([]int, 0, 1000)
 	right := make([]int, 0, 1000)
 	scanner := bufio.NewScanner(file)

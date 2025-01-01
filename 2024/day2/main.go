@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -35,7 +36,7 @@ func main() {
 
 type reportAnalyzer func([]int) bool
 
-func parseReports(file *os.File) [][]int {
+func parseReports(file io.Reader) [][]int {
 	reports := make([][]int, 0, 1000)
 	scanner := bufio.NewScanner(file)
 

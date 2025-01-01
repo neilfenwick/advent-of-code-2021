@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"regexp"
@@ -73,7 +74,7 @@ type operands struct {
 	second int
 }
 
-func parseInput(file *os.File) []operands {
+func parseInput(file io.Reader) []operands {
 	operandsList := make([]operands, 0)
 
 	// Open part1.txt for writing
