@@ -30,32 +30,46 @@ func main() {
 	}(file)
 
 	pageOrderingRules, pageUpdates := parseInput(file)
-	populateIndeces(pageUpdates)
 
-	sum := 0
+	sumValidUpdates, sumInvalidUpdates := 0, 0
 	for _, update := range pageUpdates {
-		pageOrderValid := true
 
-		for _, rule := range pageOrderingRules {
-			leftIdx, leftFound := update.index[rule.left]
-			rightIdx, rightFound := update.index[rule.right]
-			if !leftFound || !rightFound {
-				continue
-			}
+		pageOrderValid := processRulesForPageUpdates(pageOrderingRules, update)
 
-			if leftIdx > rightIdx {
-				pageOrderValid = false
-				break
-			}
-		}
-
+		middleValue := update.pageUpdates[len(update.pageUpdates)/2]
 		if pageOrderValid {
-			middleValue := update.pageUpdates[len(update.pageUpdates)/2]
-			sum += middleValue
+			sumValidUpdates += middleValue
+		} else {
+			sumInvalidUpdates += middleValue
 		}
 	}
 
-	fmt.Printf("Sum of all middle values of out of order updates: %d\n", sum)
+	fmt.Printf("Sum of all middle values of in order updates: %d\n", sumValidUpdates)
+	fmt.Printf("Sum of all middle values of out of order updates: %d\n", sumInvalidUpdates)
+}
+
+func processRulesForPageUpdates(pageOrderingRules []rule, update *pageUpdateIndex) bool {
+	isOriginalValid := true
+	for _, rule := range pageOrderingRules {
+		leftIdx, leftFound := update.index[rule.left]
+		rightIdx, rightFound := update.index[rule.right]
+		if !leftFound || !rightFound {
+			continue
+		}
+
+		if leftIdx > rightIdx {
+			isOriginalValid = false
+			update.pageUpdates[leftIdx], update.pageUpdates[rightIdx] = update.pageUpdates[rightIdx], update.pageUpdates[leftIdx]
+			update.populateIndeces()
+			break
+		}
+	}
+
+	if !isOriginalValid {
+		processRulesForPageUpdates(pageOrderingRules, update)
+	}
+
+	return isOriginalValid
 }
 
 type rule struct {
@@ -68,9 +82,9 @@ type pageUpdateIndex struct {
 	index       map[int]int
 }
 
-func parseInput(file io.Reader) ([]rule, []pageUpdateIndex) {
+func parseInput(file io.Reader) ([]rule, []*pageUpdateIndex) {
 	rules := make([]rule, 0)
-	indeces := make([]pageUpdateIndex, 0)
+	indeces := make([]*pageUpdateIndex, 0)
 
 	isProcessingRulesSection := true
 	scanner := bufio.NewScanner(file)
@@ -88,23 +102,22 @@ func parseInput(file io.Reader) ([]rule, []pageUpdateIndex) {
 			continue
 		}
 
-		index := pageUpdateIndex{pageUpdates: make([]int, 0)}
+		index := &pageUpdateIndex{pageUpdates: make([]int, 0)}
 		for _, page := range strings.Split(line, ",") {
 			pageNum, _ := strconv.Atoi(page)
 			index.pageUpdates = append(index.pageUpdates, pageNum)
 		}
+		index.populateIndeces()
 		indeces = append(indeces, index)
 	}
 
 	return rules, indeces
 }
 
-func populateIndeces(indeces []pageUpdateIndex) {
-	for i, update := range indeces {
-		index := make(map[int]int, 0)
-		for idx, pageNum := range update.pageUpdates {
-			index[pageNum] = idx
-		}
-		indeces[i].index = index
+func (p *pageUpdateIndex) populateIndeces() {
+	index := make(map[int]int, 0)
+	for idx, pageNum := range p.pageUpdates {
+		index[pageNum] = idx
 	}
+	p.index = index
 }
