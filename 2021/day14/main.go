@@ -3,21 +3,20 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"math"
+	"os"
 	"strings"
 
 	data "github.com/neilfenwick/advent-of-code/data_structures"
-	"github.com/neilfenwick/advent-of-code/files"
 )
 
 func main() {
-	file, err := files.ReadInputStream()
+	file, err := os.Open(os.Args[1])
 	if err != nil {
-		log.Fatal("Could not open input for reading")
+		log.Fatalf("Error opening file: %s", os.Args[1])
 	}
-	defer func(file io.ReadCloser) {
+	defer func(file *os.File) {
 		_ = file.Close()
 	}(file)
 
@@ -51,7 +50,7 @@ func countMinMaxElementOccurrences(input string, polymers map[string]rune) (int,
 	elementCounts := make(map[rune]int)
 	current := elementsLinkedList.Head
 	for {
-		count, _ := elementCounts[current.Value]
+		count := elementCounts[current.Value]
 		elementCounts[current.Value] = count + 1
 		if current.Next == nil {
 			break

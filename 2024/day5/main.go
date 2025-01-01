@@ -1,11 +1,11 @@
-package files
+package main
 
 import (
-	"io"
+	"log"
 	"os"
 )
 
-func ReadInputStream() (io.ReadCloser, error) {
+func main() {
 	var (
 		file *os.File
 		err  error
@@ -17,8 +17,10 @@ func ReadInputStream() (io.ReadCloser, error) {
 	case 2:
 		file, err = os.Open(os.Args[1])
 		if err != nil {
-			return nil, err
+			log.Fatalf("Error opening file: %s", os.Args[1])
 		}
 	}
-	return file, nil
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
 }

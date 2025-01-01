@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/neilfenwick/advent-of-code/tree"
+	tree "github.com/neilfenwick/advent-of-code/data_structures"
 )
 
 func main() {
@@ -98,12 +98,12 @@ type directory struct {
 func processTerminalOutput(file *os.File) *tree.Tree {
 	s := bufio.NewScanner(file)
 	var t *tree.Tree
-	var currentNode *tree.Node
+	var currentNode *tree.TreeNode
 
 	for s.Scan() {
 		if s.Text() == "$ cd /" {
 			log.Println("$root")
-			t = tree.NewTree(tree.Key{Name: "$root", Value: directory{name: "$root"}})
+			t = tree.NewTree(tree.TreeKey{Name: "$root", Value: directory{name: "$root"}})
 			_, currentNode = t.GetRoot()
 			continue
 		}
@@ -116,7 +116,7 @@ func processTerminalOutput(file *os.File) *tree.Tree {
 	return t
 }
 
-func processCommand(s *bufio.Scanner, t *tree.Tree, currentNode *tree.Node) {
+func processCommand(s *bufio.Scanner, t *tree.Tree, currentNode *tree.TreeNode) {
 	cmd := termLine{}
 	fmt.Sscanf(s.Text(), "$ %s %s", &cmd.prefix, &cmd.suffix)
 
@@ -159,7 +159,7 @@ func processCommand(s *bufio.Scanner, t *tree.Tree, currentNode *tree.Node) {
 				directory := directory{name: line.suffix}
 				t.AppendChild(
 					currentNode.Key,
-					tree.Key{Name: currentNode.Key.Name + "/" + line.suffix, Value: directory},
+					tree.TreeKey{Name: currentNode.Key.Name + "/" + line.suffix, Value: directory},
 				)
 				continue
 			}
@@ -171,7 +171,7 @@ func processCommand(s *bufio.Scanner, t *tree.Tree, currentNode *tree.Node) {
 			}
 
 			f := file{name: line.suffix, size: size}
-			t.AppendChild(currentNode.Key, tree.Key{Name: currentNode.Key.Name + "/" + line.suffix, Value: f})
+			t.AppendChild(currentNode.Key, tree.TreeKey{Name: currentNode.Key.Name + "/" + line.suffix, Value: f})
 		}
 	}
 }
@@ -192,7 +192,7 @@ func searchDirectoriesMaxSize(fileTree *tree.Tree, maxSizeThreshold int) map[str
 	return results
 }
 
-func searchDirectoriesRecursive(treeNode *tree.Node, directorySizeMap map[string]int) {
+func searchDirectoriesRecursive(treeNode *tree.TreeNode, directorySizeMap map[string]int) {
 	switch treeNode.Key.Value.(type) {
 	case directory:
 		for _, child := range treeNode.Children {

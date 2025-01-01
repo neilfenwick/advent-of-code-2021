@@ -3,9 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/neilfenwick/advent-of-code/tree"
 	"os"
 	"sort"
+
+	tree "github.com/neilfenwick/advent-of-code/data_structures"
 )
 
 func main() {
@@ -27,20 +28,20 @@ func main() {
 
 	var t *tree.Tree
 	for name, disc := range discs {
-		var node *tree.Node
+		var node *tree.TreeNode
 		if t == nil {
-			t = tree.NewTree(tree.Key{Name: disc.Name, Value: disc})
+			t = tree.NewTree(tree.TreeKey{Name: disc.Name, Value: disc})
 			_, node = t.GetRoot()
 		}
 
 		if node == nil {
-			node, _ = t.AppendNode(tree.Key{Name: disc.Name, Value: disc})
+			node, _ = t.AppendNode(tree.TreeKey{Name: disc.Name, Value: disc})
 		}
 
 		for _, childName := range disc.Children {
 			child := discs[childName]
-			parent := tree.Key{Name: name, Value: node.Key}
-			newChild := tree.Key{Name: child.Name, Value: child}
+			parent := tree.TreeKey{Name: name, Value: node.Key}
+			newChild := tree.TreeKey{Name: child.Name, Value: child}
 			t.AppendChild(parent, newChild)
 		}
 	}
@@ -115,7 +116,7 @@ func searchForUnbalancedChildren(t *tree.Tree, startNodeName string) (string, in
 	return childNameSearch, childDelta
 }
 
-func getNodeWeight(node *tree.Node) int {
+func getNodeWeight(node *tree.TreeNode) int {
 	var weight int
 	for _, child := range node.Children {
 		weight += getNodeWeight(child)

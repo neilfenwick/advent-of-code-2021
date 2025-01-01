@@ -1,4 +1,4 @@
-package tree
+package data
 
 import (
 	"fmt"
@@ -7,26 +7,26 @@ import (
 
 // Tree represents a graph of Nodes data elements
 type Tree struct {
-	nodes map[string]*Node
+	nodes map[string]*TreeNode
 }
 
 // NewTree creates a new Tree data structure that will store a graph of Nodes
-func NewTree(key Key) *Tree {
-	node := Node{Key: key}
-	tree := Tree{nodes: make(map[string]*Node)}
+func NewTree(key TreeKey) *Tree {
+	node := TreeNode{Key: key}
+	tree := Tree{nodes: make(map[string]*TreeNode)}
 
 	tree.nodes[key.Name] = &node
 	return &tree
 }
 
 // AppendNode creates a new tree node using the given Key
-func (t *Tree) AppendNode(key Key) (*Node, bool) {
+func (t *Tree) AppendNode(key TreeKey) (*TreeNode, bool) {
 	n, ok := t.nodes[key.Name]
 	if ok {
 		return n, false
 	}
 
-	n = &Node{
+	n = &TreeNode{
 		Key: key,
 	}
 
@@ -35,7 +35,7 @@ func (t *Tree) AppendNode(key Key) (*Node, bool) {
 }
 
 // AppendChild adds a new child Node to the parent that matches the supplied Key
-func (t *Tree) AppendChild(parent Key, child Key) *Node {
+func (t *Tree) AppendChild(parent TreeKey, child TreeKey) *TreeNode {
 	parentNode := t.nodes[parent.Name]
 	if parentNode == nil {
 		parentNode, _ = t.AppendNode(parent)
@@ -44,7 +44,7 @@ func (t *Tree) AppendChild(parent Key, child Key) *Node {
 	childNode := t.nodes[child.Name]
 
 	if childNode == nil {
-		childNode = &Node{
+		childNode = &TreeNode{
 			Key:    child,
 			Parent: parentNode,
 		}
@@ -59,7 +59,7 @@ func (t *Tree) AppendChild(parent Key, child Key) *Node {
 }
 
 // GetRoot returns the root Node of the Tree
-func (t *Tree) GetRoot() (string, *Node) {
+func (t *Tree) GetRoot() (string, *TreeNode) {
 	for name, node := range t.nodes {
 		if node.Parent == nil {
 			return name, node
@@ -69,19 +69,19 @@ func (t *Tree) GetRoot() (string, *Node) {
 }
 
 // GetNode returns a Node that has a key with the unique name supplied
-func (t *Tree) GetNode(name string) (*Node, bool) {
+func (t *Tree) GetNode(name string) (*TreeNode, bool) {
 	node, ok := t.nodes[name]
 	return node, ok
 }
 
 // Node represents an element of a Tree data graph
-type Node struct {
-	Parent   *Node
-	Children []*Node
-	Key      Key
+type TreeNode struct {
+	Parent   *TreeNode
+	Children []*TreeNode
+	Key      TreeKey
 }
 
-func (n *Node) GetChild(name string) (*Node, bool) {
+func (n *TreeNode) GetChild(name string) (*TreeNode, bool) {
 	children := n.Children
 	for _, child := range children {
 		if child.Key.Name == name {
@@ -91,7 +91,7 @@ func (n *Node) GetChild(name string) (*Node, bool) {
 	return nil, false
 }
 
-func (n *Node) GetPath() string {
+func (n *TreeNode) GetPath() string {
 	segments := make([]string, 0)
 	segments = append(segments, n.Key.Name)
 	parent := n.Parent
@@ -107,13 +107,13 @@ func (n *Node) GetPath() string {
 		builder.WriteString(segments[i])
 	}
 
-    fmt.Println(builder.String())
+	fmt.Println(builder.String())
 	return builder.String()
 }
 
 // Key represents key-value pair that contains a unique Name, and a Value to be stored
 // or retrieved from the tree
-type Key struct {
+type TreeKey struct {
 	Name  string
 	Value interface{}
 }
