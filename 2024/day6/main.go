@@ -19,8 +19,13 @@ func main() {
 	}(file)
 
 	grid := parseInput(file)
-	pointCount := countGuardPathPointsVisited(grid)
+	pointCount, _ := countGuardPathPointsVisited(grid)
 	fmt.Printf("Guard visited %d points\n", pointCount)
+
+	// I did this the brute force way by iterating over all points and adding an obstacle to each point
+	// and checking if the guard is stuck in a loop. Is there a more efficient way to do this?
+	loopObstructionCount := countLoopObstructions(grid)
+	fmt.Printf("There are %d points that cause the guard to loop\n", loopObstructionCount)
 }
 
 type point struct {
@@ -79,12 +84,20 @@ func parseInput(file *os.File) *obstacleGrid {
 	return grid
 }
 
-func countGuardPathPointsVisited(grid *obstacleGrid) int {
+func countGuardPathPointsVisited(grid *obstacleGrid) (int, error) {
 	guardPos := grid.guardStartPos
 	guardDirection := grid.guardStartDirection
-	pointsVisited := make(map[point]bool)
+	pointsVisited := make(map[point]vector, grid.sizeX*grid.sizeY)
 
 	for guardPos.x >= 0 && guardPos.x < grid.sizeX && guardPos.y >= 0 && guardPos.y < grid.sizeY {
+		if prevDirection, found := pointsVisited[guardPos]; !found {
+			pointsVisited[guardPos] = guardDirection
+		} else {
+			if prevDirection == guardDirection {
+				return 0, fmt.Errorf("guard is stuck in a loop")
+			}
+		}
+
 		nextPos := point{x: guardPos.x + guardDirection.x, y: guardPos.y + guardDirection.y}
 		if grid.obstacles[nextPos] {
 			switch guardDirection {
@@ -98,12 +111,37 @@ func countGuardPathPointsVisited(grid *obstacleGrid) int {
 				guardDirection = up
 			}
 		} else {
-			if _, ok := pointsVisited[guardPos]; !ok {
-				pointsVisited[guardPos] = true
-			}
 			guardPos = nextPos
 		}
 	}
 
-	return len(pointsVisited)
+	return len(pointsVisited), nil
+}
+
+func countLoopObstructions(grid *obstacleGrid) int {
+	loopCount := 0
+
+	for x := range grid.sizeX {
+		for y := range grid.sizeY {
+			// Skip if there is already an obstacle at this point, or it is the guard start position,
+			// or directly in front of the guard start position
+			if grid.obstacles[point{x: x, y: y}] ||
+				(x == grid.guardStartPos.x && y == grid.guardStartPos.y) ||
+				(x == grid.guardStartPos.x+grid.guardStartDirection.x && y == grid.guardStartPos.y+grid.guardStartDirection.y) {
+				continue
+			}
+
+			// add an obstacle and check if the guard is stuck in a loop
+			grid.obstacles[point{x: x, y: y}] = true
+			if _, err := countGuardPathPointsVisited(grid); err != nil {
+				loopCount++
+			}
+
+			// remove the obstacle because this same instance of the map is used for all iterations
+			delete(grid.obstacles, point{x: x, y: y})
+
+		}
+	}
+
+	return loopCount
 }
