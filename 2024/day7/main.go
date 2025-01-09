@@ -53,6 +53,11 @@ func multiply(a, b uint64) uint64 {
 	return a * b
 }
 
+/*
+	concat returns the base 10 concatenation of two uint64 numbers.
+
+For example, concat(1, 2) returns 12, and concat(12, 34) returns 1234.
+*/
 func concat(a, b uint64) uint64 {
 	multiplier := uint64(1)
 
@@ -68,9 +73,16 @@ func concat(a, b uint64) uint64 {
 	return a*multiplier + b
 }
 
-func apply(a, b uint64, f func(uint64, uint64) uint64) func() uint64 {
+/*
+apply is a currying function
+
+takes a first argument of an aggregating function that will return an int, and a second argument of another int,
+with a third argument of a function to be applied to the result of the first two arguments. It returns a wrapper
+function that will return the result of the third function applied to the result of the f(a(), b).
+*/
+func apply(a func() uint64, b uint64, f func(uint64, uint64) uint64) func() uint64 {
 	return func() uint64 {
-		return f(a, b)
+		return f(a(), b)
 	}
 }
 
@@ -87,7 +99,6 @@ func readInput(file *os.File) []equation {
 func parseEquation(line string) equation {
 	eq := equation{}
 
-	// Split the line uint64o result part and operands part
 	parts := strings.SplitN(line, ":", 2)
 	if len(parts) != 2 {
 		log.Fatalf("Invalid equation: %s", line)
@@ -138,7 +149,7 @@ func (currentNode *treeNode) appendCalculationBranches(operands []uint64, operat
 
 	for _, operator := range operators {
 		// Create a new apply() function for the result() function
-		result := apply(currentNode.value(), operands[0], operator)
+		result := apply(currentNode.value, operands[0], operator)
 		node := &treeNode{value: result}
 
 		currentNode.appendChild(node)
