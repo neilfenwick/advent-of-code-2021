@@ -22,12 +22,22 @@ func main() {
 
 	// Part 1
 	var total uint64
-	matches := findMatchingEquations(equations)
+	matches := findMatchingEquations(equations, []func(uint64, uint64) uint64{add, multiply})
 	for _, eq := range matches {
 		total += eq.result
 	}
 
-	fmt.Printf("Total of matching equations: %d\n", total)
+	fmt.Printf("Part1: Total of matching equations: %d\n", total)
+
+	// Part 2
+	total = 0
+
+	matchesPt2 := findMatchingEquations(equations, []func(uint64, uint64) uint64{add, multiply, concat})
+	for _, eq := range matchesPt2 {
+		total += eq.result
+	}
+
+	fmt.Printf("Part2: Total of matching equations: %d\n", total)
 }
 
 type equation struct {
@@ -41,6 +51,21 @@ func add(a, b uint64) uint64 {
 
 func multiply(a, b uint64) uint64 {
 	return a * b
+}
+
+func concat(a, b uint64) uint64 {
+	multiplier := uint64(1)
+
+	// Little trick to determine the number of digits in b
+	// keep dividing b by 10 until it reaches 0
+	// and the number of divisions is the number of digits in b
+	for temp := b; temp > 0; temp /= 10 {
+		multiplier *= 10
+	}
+
+	// Multiply a by the number of digits in b and add b
+	// to effectively shify a to the left in base 10, and add b
+	return a*multiplier + b
 }
 
 func apply(a, b uint64, f func(uint64, uint64) uint64) func() uint64 {
@@ -91,12 +116,12 @@ func (currentNode *treeNode) appendChild(value *treeNode) {
 	currentNode.children = append(currentNode.children, value)
 }
 
-func findMatchingEquations(equations []equation) []equation {
+func findMatchingEquations(equations []equation, operators []func(uint64, uint64) uint64) []equation {
 	results := make([]equation, 0, len(equations))
 
 	for _, eq := range equations {
 		treeRoot := treeNode{value: func() uint64 { return eq.operands[0] }}
-		treeRoot.appendCalculationBranches(eq.operands[1:])
+		treeRoot.appendCalculationBranches(eq.operands[1:], operators)
 
 		if depthFirstSearchMatchingEquation(&treeRoot, eq.result) {
 			results = append(results, eq)
@@ -106,24 +131,20 @@ func findMatchingEquations(equations []equation) []equation {
 	return results
 }
 
-func (currentNode *treeNode) appendCalculationBranches(operands []uint64) {
+func (currentNode *treeNode) appendCalculationBranches(operands []uint64, operators []func(uint64, uint64) uint64) {
 	if len(operands) == 0 {
 		return
 	}
 
-	// Create a new apply() function for the sum() function
-	sum := apply(currentNode.value(), operands[0], add)
-	sumNode := &treeNode{value: sum}
+	for _, operator := range operators {
+		// Create a new apply() function for the result() function
+		result := apply(currentNode.value(), operands[0], operator)
+		node := &treeNode{value: result}
 
-	currentNode.appendChild(sumNode)
+		currentNode.appendChild(node)
 
-	// Create a new apply() function for the multiply() function
-	mul := apply(currentNode.value(), operands[0], multiply)
-	mulNode := &treeNode{value: mul}
-	currentNode.appendChild(mulNode)
-
-	sumNode.appendCalculationBranches(operands[1:])
-	mulNode.appendCalculationBranches(operands[1:])
+		node.appendCalculationBranches(operands[1:], operators)
+	}
 }
 
 func depthFirstSearchMatchingEquation(currentNode *treeNode, result uint64) bool {
